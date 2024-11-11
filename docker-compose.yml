@@ -3,13 +3,13 @@ services:
     image: wordpress:php8.0-fpm
     container_name: wordpress
     environment:
-      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
       WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
       WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      VIRTUAL_HOST: ${DOMAIN}
     volumes:
       - ./wordpress:/var/www/html
-      - ./php.ini:/usr/local/etc/php/php.ini
     networks:
       - wp-network
 
@@ -43,8 +43,22 @@ services:
     networks:
       - wp-network
 
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80" # Expose HTTP port
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    environment:
+      DEFAULT_HOST: ${DOMAIN}
+    networks:
+      - wp-network
+
 volumes:
   db_data:
 
 networks:
   wp-network:
+    driver: bridge
