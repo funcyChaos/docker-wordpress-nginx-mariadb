@@ -6,7 +6,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf # Change to dev nginx to get ssl started
       - ./wordpress:/var/www/html
       - ./certbot/www/:/var/www/certbot/:ro   # For Certbot challenge files
       - ./certbot/conf/:/etc/letsencrypt/:ro  # SSL certs
