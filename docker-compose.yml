@@ -27,7 +27,8 @@ services:
     depends_on:
       - wordpress
       - db
-    entrypoint: ["wp"]
+    user: root
+    entrypoint: ["wp", "--allow-root"]
     networks:
       - wp-network
 
