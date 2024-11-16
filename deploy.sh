@@ -10,11 +10,14 @@
 
 
 ### Testing Cause Newb ###
-REMOTE="tech-garage"
+# REMOTE="tech-garage"
+REMOTE="knotty"
 
-docker-compose run --rm wpcli db export /var/www/html/local/backup.sql
+# docker-compose run --rm wpcli db export /var/www/html/local/backup.sql
 
-scp ./wordpress/local/backup.sql $REMOTE:~/
+ssh $REMOTE "cd docker-wordpress-nginx-mariadb && docker-compose run --rm wpcli db export /var/backups/backup.sql"
+
+# scp ./wordpress/local/backup.sql $REMOTE:~/
 
 # Step 1: Export the local WordPress database using WP-CLI (from local Docker container)
 # docker-compose exec $CONTAINER_NAME wp db export /var/www/html/$LOCAL_DB_BACKUP

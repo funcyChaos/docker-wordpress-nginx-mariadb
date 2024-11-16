@@ -3,7 +3,7 @@ services:
     image: nginx:latest
     container_name: nginx
     ports:
-      - "3000:80"
+      - "80:80"
     volumes:
       - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf
       - ./wordpress:/var/www/html
