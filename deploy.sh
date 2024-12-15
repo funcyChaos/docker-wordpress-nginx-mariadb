@@ -1,12 +1,45 @@
-REMOTE="porch-fest-do"
-DOMAIN="https://towerporchfest.org"
+# Run to make executable: chmod +x script.sh
 
-docker compose run --rm wpcli db export /var/backups/backup.sql
-scp ./db_backups/backup.sql $REMOTE:~/docker/db_backups/backup.sql
-rsync -avz ./wordpress/wp-content/ $REMOTE:~/docker/wordpress/wp-content/
+LOCAL="$HOME/code/work/all-happenings/wordpress/"
+REMOTE="remote-server"
+DOMAIN="https://allhappenings.com"
 
-ssh $REMOTE << "EOF"
-cd docker
-docker compose run --rm wpcli db import /var/backups/backup.sql
-docker compose run --rm search-replace 'http://localhost:8000' '$DOMAIN' --skip-columns=guid
+deploy_db(){
+	docker compose run --rm wpcli db export /var/backups/backup.sql
+	scp $local/db_backups/backup.sql $REMOTE:~/docker/db_backups/backup.sql
+	ssh $REMOTE << "EOF"
+	cd docker
+	docker compose run --rm wpcli db import /var/backups/backup.sql
+	docker compose run --rm search-replace 'http://localhost:8000' '$DOMAIN' --skip-columns=guid
 EOF
+}
+
+deploy_theme(){
+	rsync -avz --exclude-from='rsync-exclude' ./ all-happenings:~/docker-wordpress-nginx-mariadb/wordpress/wp-content/themes/AllHappenings-Wordpress-Theme/
+}
+
+deploy_content(){
+	rsync -avz ./wordpress/wp-content/ $REMOTE:~/docker/wordpress/wp-content/
+}
+
+dev_up(){
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+}
+
+dev_down(){
+	docker-compose down --remove-orphans
+}
+
+if [ "$1" == "deploy db" ]; then
+	deploy_db
+elif [ "$1" == "deploy theme" ]; then
+	deploy_theme
+elif [ "$1" == "deploy content" ]; then
+	deploy_content
+elif [ "$1" == "dev up" ]; then
+	dev_up
+elif [ "$1" == "dev down" ]; then
+	dev_down
+else
+	echo "Usage: $0 {deploy db | deploy theme | deploy content}"
+fi
