@@ -1,0 +1,7 @@
+.git/
+.vscode/
+sass/
+*.sh
+rsync-exclude
+.gitignore
+README.md

@@ -23,23 +23,24 @@ deploy_content(){
 }
 
 dev_up(){
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 }
 
 dev_down(){
-	docker-compose down --remove-orphans
+	docker compose down --remove-orphans
 }
 
-if [ "$1" == "deploy db" ]; then
+if [ "$1" == "deploydb" ]; then
 	deploy_db
-elif [ "$1" == "deploy theme" ]; then
+elif [ "$1" == "deploytheme" ]; then
 	deploy_theme
-elif [ "$1" == "deploy content" ]; then
+elif [ "$1" == "deploycontent" ]; then
 	deploy_content
-elif [ "$1" == "dev up" ]; then
+elif [ "$1" == "devup" ]; then
 	dev_up
-elif [ "$1" == "dev down" ]; then
+elif [ "$1" == "devdown" ]; then
 	dev_down
 else
+	echo "$1"
 	echo "Usage: $0 {deploy db | deploy theme | deploy content}"
 fi
